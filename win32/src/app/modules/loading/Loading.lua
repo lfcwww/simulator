@@ -9,7 +9,7 @@ if not Loading then
 	print("加载了loading")
 
 	function Loading:ctor(viewID, params)
-	    cc.Label:createWithSystemFont("横扫三国", "Arial", 40)
+	    cc.Label:createWithSystemFont("横扫三国tank", "Arial", 40)
 	        :move(display.cx, display.cy + 200)
 	        :addTo(self)
 	        print("加载了loading22222222222222")
