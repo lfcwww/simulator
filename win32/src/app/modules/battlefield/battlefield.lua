@@ -18,6 +18,15 @@ if not battlefield then
 	   	cc.Label:createWithSystemFont("战场", "Arial", 40)
         :move(display.cx, display.cy + 200)
         :addTo(self)
+
+
+       	self.Joystick_Wheel = Joystick:create()
+       	self:addChild(self.Joystick_Wheel)
+       	self.Joystick_Wheel:setPosition(100,100)
+
+       	self.Joystick_Aim = Joystick:create()
+       	self:addChild(self.Joystick_Aim)
+       	self.Joystick_Aim:setPosition(display.width-300,100)
 	end
 
 
