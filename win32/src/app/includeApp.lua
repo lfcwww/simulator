@@ -3,7 +3,7 @@ if not includeApp then
 	import(".Tkframe.base.view.ViewConfig")
 	import(".Tkframe.base.view.ViewMgr")
 	import(".Tkframe.base.view.BaseLayer")
-	import(".Tkframe.base.role.Rolebase");
+	import(".Tkframe.base.role.ActorBase");
 
 
 	import(".Interface.Effect");
@@ -11,6 +11,8 @@ if not includeApp then
 	import(".Interface.CcFuns");
 	import(".Interface.JoyStick");
 	import(".Interface.SkillBtn");
+	import(".Interface.BattleActor");
+	
 
 
 	
