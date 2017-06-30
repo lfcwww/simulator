@@ -5,7 +5,6 @@ if not Joystick then
     cc.exports.Joystick = Joystick
 
     local FollowFinger = false --是否跟随手指
-    local defaultPos = cc.p(50,50)
     local defaultdifValue =  0.01 --遥感滑动距离--遥感灵敏度调节
 
     Joystick.touchEvent = {
@@ -18,7 +17,9 @@ if not Joystick then
 
     function Joystick:ctor(param)
         self.touchCallback = nil
+        self.defaultPos = cc.p(50,50)
         self:init()
+        self:touchContainer()
     end
 
     function Joystick:init()
@@ -26,10 +27,11 @@ if not Joystick then
         -- self.BasePlate = display.newSprite("JoystickContainer.png")--TODO
         self.BasePlate = display.newSprite("#gongyong_2anniu_6.png")--TODO
         self.BasePlate:setAnchorPoint(0.5 , 0.5)
-        self.BasePlate:setPosition(defaultPos)
+        self.BasePlate:setPosition(self.defaultPos)
         ccui.Helper:doLayout(self.BasePlate)
         self:addChild(self.BasePlate)
         self.BasePlate:setOpacity(20)
+        self:setContentSize(display.cx, display.height)
         --摇杆层
         -- self.stick = display.newSprite("JoystickNorm.png")--TODO
         self.stick = display.newSprite("#gongyong_dian_2.png")--TODO
@@ -37,78 +39,69 @@ if not Joystick then
         self.stick:setScale(0.8)
         self.BasePlate:addChild(self.stick , 1)
         self.stick:setOpacity(100)
+    end
 
-        self.controlDiameter = self.BasePlate:getContentSize().width - self.stick:getContentSize().width
+    function Joystick:touchContainer()
         self.angle = 0
         --添加点击事件
-        local function onTouchesBegan(touches ,event)
+        local function onTouchesBegan(event)
             if FollowFinger then
-                self.BasePlate:setPosition(touches[1]:getLocation())
+                self.BasePlate:setPosition(cc.pSub(cc.p(event.x,event.y), cc.p(self:getPositionX(), self:getPositionY()) ))
             end
-
-            if cc.rectContainsPoint(self:getBoundingBox(),touches[1]:getLocation()) then
+            if cc.rectContainsPoint(self:getBoundingBox(),cc.p(event.x,event.y)) then
                 return true
             end
             self:onTouchesHandler(Joystick.touchEvent.Began)
             return false    
         end
 
-        local function onTouchesMoved(touches , event)
-            if cc.rectContainsPoint(self:getBoundingBox(),touches[1]:getLocation()) then
-                local point = touches[1]:getLocation()
-                -- dump(point)
-                local x = point.x - self.BasePlate:getPositionX()
-                local y = point.y - self.BasePlate:getPositionY()
-                local pos = cc.p(self.BasePlate:getPositionX(),self.BasePlate:getPositionY())--cc.p(self.BasePlate:getContentSize().width/2 , self.BasePlate:getContentSize().height/2)
+        local function onTouchesMoved(event)
+            local point = cc.p(event.x, event.y)
+            if cc.rectContainsPoint(self:getBoundingBox(),point) then
+                local stickWorldPosX = self.BasePlate:getPositionX()+self:getPositionX()
+                local stickWorldPosY = self.BasePlate:getPositionY()+self:getPositionY()
+
+                local x = point.x - stickWorldPosX
+                local y = point.y - stickWorldPosY
+
+                local pos = cc.p(stickWorldPosX, stickWorldPosY)
                 if math.sqrt(math.pow(x , 2) + math.pow( y , 2)) >= self.BasePlate:getContentSize().width/2 then
-                    --得到触点与摇杆背景圆心形成的角度
                     self.angle = self:handleTouchChange(pos , point)
-                    -- print("====",point.x, point.y, self.angle)
-                    --确保小圆的运动范围在背景园内
-                    -- if self.angle > 1.51046 or self.angle < -0.8075908 then
-                    --     return
-                    -- end
-                    -- print("···",self.angle)
-                    -- dump(self:getAnglePosition(self.BasePlate:getPositionX() , self.angle))
-                    -- dump(cc.p(self.BasePlate:getContentSize().width/2 , self.BasePlate:getContentSize().height/2))
-                    -- dump(self:getAnglePosition(cc.p(self.BasePlate:getPositionX() , self.BasePlate:getPositionY()))
                     self.stick:setPosition(cc.pAdd(self:getAnglePosition(self.BasePlate:getContentSize().width/2 , self.angle) , cc.p(self.BasePlate:getContentSize().width/2 , self.BasePlate:getContentSize().height/2)))
                 else
                     self.angle = self:handleTouchChange(pos , point)
-                    --触点在背景圆内跟随触点运动
-                    -- if self.angle > 1.51046 or self.angle < -0.8075908 then
-                    --     return
-                    -- end
                     self.stick:setPosition(point.x-pos.x+self.BasePlate:getContentSize().width/2, point.y-pos.y+self.BasePlate:getContentSize().height/2)
                 end
-                -- self:changeAngleForBone()
                 local kx_paodan = self.stick:getPositionX() / math.sqrt(math.pow(self.stick:getPositionX() , 2) + math.pow(self.stick:getPositionY() , 2 ))
                 local ky_paodan = self.stick:getPositionY() / math.sqrt(math.pow(self.stick:getPositionX() , 2) + math.pow(self.stick:getPositionY() , 2 ))
-               -- print("kx : "..kx_paodan..", ky : "..ky_paodan)
-               -- print("self.angle==",self.angle)
                self:onTouchesHandler(Joystick.touchEvent.Moved)
             end 
         end
 
-        local function onTouchesEnded(touches , event)
-            self.BasePlate:setPosition(defaultPos)
+        local function onTouchesEnded(event)
+            self.BasePlate:setPosition(self.defaultPos)
             local origin = cc.p(self.BasePlate:getContentSize().width/2 , self.BasePlate:getContentSize().height/2)
             self.stick:setPosition(origin)
             self:onTouchesHandler(Joystick.touchEvent.Ended)
         end
 
-        local function onTouchesCancelled(touches , event)
-            onTouchesEnded(touch , event)
-        end
-
-        local listener = cc.EventListenerTouchAllAtOnce:create()
-        listener:registerScriptHandler(onTouchesBegan , cc.Handler.EVENT_TOUCHES_BEGAN)
-        listener:registerScriptHandler(onTouchesMoved , cc.Handler.EVENT_TOUCHES_MOVED)
-        listener:registerScriptHandler(onTouchesEnded , cc.Handler.EVENT_TOUCHES_ENDED)
-        listener:registerScriptHandler(onTouchesCancelled , cc.Handler.EVENT_TOUCHES_CANCELLED)
-        cc.Director:getInstance():getEventDispatcher():addEventListenerWithSceneGraphPriority(listener , self)
+        self.TouchNode = display.newNode():addTo(self)
+        self.TouchNode:setTouchEnabled(true)
+        self.TouchNode:setContentSize(self:getContentSize())
+        self.TouchNode:addNodeTouchEventListener(function (sender, event)
+            if event.name == "began" then
+                onTouchesBegan(event)
+                return true
+            elseif event.name == "moved" then
+                onTouchesMoved(event)
+            elseif event.name == "ended" then
+                onTouchesEnded(event)
+            elseif event.name == "canceled" then
+                onTouchesEnded(event)
+            end
+        end)
     end
-
+    
     function Joystick:onTouchesHandler(eventName)
         if eventName == Joystick.touchEvent.Moved then
             self.histroyAngle = self.histroyAngle or 0
@@ -130,37 +123,23 @@ if not Joystick then
     end
 
     --获取当前摇杆与用户触屏点的角度
-    function Joystick:handleTouchChange(_posA , _posB)
-        --得到两点坐标的x，y坐标值
-        local px1 = _posA.x
-        local py1 = _posA.y
-        local px2 = _posB.x
-        local py2 = _posB.y
-
+    function Joystick:handleTouchChange(_posA, _posB)
         --求出两边的长度
-        local x = px2 - px1
-        local y = py1 - py2
-
-        -- local r = math.atan2(y,x)*360/math.pi  
+        local x = _posB.x - _posA.x
+        local y = _posA.y - _posB.y
 
         --求出距离 及 角度
-        local xie = math.sqrt(math.pow(x , 2) + math.pow( y , 2))
-        local cos = x/xie
+        local bevel = math.sqrt(math.pow(x , 2) + math.pow( y , 2))
+        local cos = x/bevel
 
         --反余弦定理 ， 知道两边长求角度 cos = 邻边/斜边
         local rad = math.acos(cos)
-
-        --当触屏Y坐标 < 摇杆的Y坐标时，取反值
-        if py1 > py2 then
+        if _posA.y > _posB.y then
             rad = -rad
         end
         -- print("rad=",math.deg(rad))
-        
         return rad
     end
-
-
-
 
     --得到与角度对应的半径为r的圆上一坐标点
     function Joystick:getAnglePosition(r , angle)
@@ -169,9 +148,10 @@ if not Joystick then
         return cc.p(x , y)
     end
 
-    function Joystick:setLocalPosition(_x, _y)
-        defaultPos = cc.p(_x, _y)
-        self.BasePlate:setPosition(defaultPos)
+    function Joystick:setWorldPosition(_x, _y)
+        print("···",self:getPositionX(),self:getPositionY())
+        self.defaultPos = cc.pSub(cc.p(_x,_y), cc.p(self:getPositionX(), self:getPositionY()))
+        self.BasePlate:setPosition(self.defaultPos)
     end
 
     function Joystick:setFollowFinger(bool)
