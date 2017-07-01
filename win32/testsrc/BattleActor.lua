@@ -13,13 +13,15 @@ if not BattleActor then
 	}
 
 	function BattleActor:ctor(param)
-
-		local modelId = 1 --模型ID
-
-		self.m_AngleRad = 0
-
+		--模型ID
+		local modelId = 1 
+		--状态
 		self._state = BattleActor.state.stand
-
+ 		--随点焦点
+		self.FollowPointCallback = nil
+		--旋转值
+		self.m_AngleRad = 0
+		--计时相关
 		self._sendBullet = false
 		self.curUpdatetime = 0
 		self.sandBulletTime = 0
@@ -37,11 +39,9 @@ if not BattleActor then
 	function BattleActor:UpdataMachine()
 		self.curUpdatetime = self.curUpdatetime + Animationspeed
 		if self._state ==  BattleActor.state.stand then
-
 		elseif self._state ==  BattleActor.state.run then
 			self:setRoleMove()
 		end
-
 		if self._sendBullet then
 			if self.curUpdatetime - self.sandBulletTime > bulletInterval then
 				self:Shooting()
@@ -70,12 +70,18 @@ if not BattleActor then
 		self._sendBullet = true
 	end
 
+	function BattleActor:_registerFollow(callback)
+		self.FollowPointCallback = callback
+	end
 
 	function BattleActor:setRoleMove()
 		local curX,curY = self:getPosition()
 		local pos = self:getAnglePosition(moveLength)
 		local newPos = cc.pAdd(pos,cc.p(curX,curY))
         self:setPosition(newPos)
+        if self.FollowPointCallback then
+        	self.FollowPointCallback(newPos)
+        end
 	end	
 
 	function BattleActor:setRoleStopMove()

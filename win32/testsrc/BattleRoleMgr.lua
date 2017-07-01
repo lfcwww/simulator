@@ -1,28 +1,69 @@
---瓦片地图
+--瓦片地图 --http://happysoul.iteye.com/blog/2279627
 --不能行走区
---碰撞检测
---AI
--- http://www.cocoachina.com/bbs/read.php?tid=221969     Cocos2d-x3.2总结(四)使用物理引擎进行碰撞检测   
+--碰撞检测 http://www.cocoachina.com/bbs/read.php?tid=221969     Cocos2d-x3.2总结(四)使用物理引擎进行碰撞检测 
+--AI 	1--http://blog.csdn.net/itcastcpp/article/details/17533421
+--		2--http://www.cocoachina.com/game/20150810/12962.html
+--
+--
 if not BattleRoleMgr then
 
 	local BattleRoleMgr = class("BattleRoleMgr", function() return display.newLayer() end)
 	cc.exports.BattleRoleMgr = BattleRoleMgr
 
-	function BattleRoleMgr:ctor(background)
-		self.standMap = background
-
-		battlefieldData:sharedData():init()
-
+	function BattleRoleMgr:ctor()
+		self.standMap = nil
 		self.playerRole = nil
+		self.FollowPointRole = nil
+
+
+		BattlefieldData:sharedData():init()
 
 		self.JoystickWheel_angle = 0
 
-		self:initEnemyRole()
+		-- self:initEnemyRole()
 	end
 
 	function BattleRoleMgr:setStandMap(node)
 		self.standMap = node
+		self:registerFollowPoint(self.playerRole)
 	end
+
+	function BattleRoleMgr:registerFollowPoint(role)
+		if self.FollowPointRole then
+			self.FollowPointRole:_registerFollow(nil)
+		end
+		if role then
+			role:_registerFollow(handler(self, self.UpdateMapFollowPoint))
+			self.FollowPointRole = role
+		end
+	end
+
+	function BattleRoleMgr:UpdateMapFollowPoint(pos)
+		local worldPoint = self.standMap:convertToWorldSpace(pos)
+		local offsetX = display.cx - worldPoint.x
+		local offsetY = display.cy - worldPoint.y
+		local destX = self.standMap:getPositionX() + offsetX
+		local destY = self.standMap:getPositionY() + offsetY
+		if destX > 0 then
+			destX = 0
+		end
+		if destX < -(self.standMap:getContentSize().width - display.width) then
+			destX = -(self.standMap:getContentSize().width - display.width)
+		end
+		if destY > self.standMap:getContentSize().height / 2 then
+			destY = self.standMap:getContentSize().height / 2
+		end
+		if destY < display.height - self.standMap:getContentSize().height / 2 then
+			destY = display.height - self.standMap:getContentSize().height / 2
+		end
+		-- dump(pos)
+		-- print("ddd===",destX)
+		-- print("ddd===",destY)
+		self.standMap:setPositionX(destX)
+		self.standMap:setPositionY(destY)
+	end
+
+	
 
 
 	function BattleRoleMgr:buildMyRole(pos)
@@ -31,7 +72,7 @@ if not BattleRoleMgr then
 	       	self:addChild(Role)
 	       	Role:setPosition(pos or cc.p(display.cx,display.cy))
 	       	self.playerRole = Role
-	       	battlefieldData:sharedData():setMyActor(self.playerRole)
+	       	BattlefieldData:sharedData():setMyActor(self.playerRole)
 	    end
 	    return self.playerRole
 	end
@@ -47,7 +88,7 @@ if not BattleRoleMgr then
 			local posx = poslist[i].x--math.random(0,960)
 			local posy = poslist[i].y--math.random(0,640)
 			local role = self:addEnemyRole(cc.p(posx,posy))
-			battlefieldData:sharedData():insertEnemyActor(role)
+			BattlefieldData:sharedData():insertEnemyActor(role)
 		end
 	end
 
@@ -63,6 +104,9 @@ if not BattleRoleMgr then
 	end
 
 	function BattleRoleMgr:addPlayerRole(pos)
+
+
+
 	end
 
 

@@ -148,8 +148,9 @@ if not Joystick then
         return cc.p(x , y)
     end
 
+    --convertToNodeSpace：把世界坐标转换到当前节点的本地坐标系中。TODO
     function Joystick:setWorldPosition(_x, _y)
-        print("···",self:getPositionX(),self:getPositionY())
+        -- print("···",self:getPositionX(),self:getPositionY())
         self.defaultPos = cc.pSub(cc.p(_x,_y), cc.p(self:getPositionX(), self:getPositionY()))
         self.BasePlate:setPosition(self.defaultPos)
     end

@@ -50,18 +50,18 @@ if not Bullet then
 	end
 
 	function Bullet:CheckboundingBox()
-		local EnemyArray = battlefieldData:sharedData():getEnemyActor()
+		local EnemyArray = BattlefieldData:sharedData():getEnemyActor()
 		local BulletRect = self:getTouchRect()
-		dump(EnemyArray)
+		-- dump(EnemyArray)
 		for i,v in ipairs(EnemyArray) do
 			local EnemyRect = v:getTouchRect()
-			dump(EnemyRect)
-			dump(BulletRect)
+			-- dump(EnemyRect)
+			-- dump(BulletRect)
 			if cc.rectIntersectsRect(EnemyRect, BulletRect) then
 				g_tipsMgr:ShowTips("尚未弄跳转")
 				if v.setBoom then
 					v:setBoom()
-					battlefieldData:sharedData():removeEnemyActor(i)
+					BattlefieldData:sharedData():removeEnemyActor(i)
 				end
 			end
 		end
@@ -69,7 +69,6 @@ if not Bullet then
 	end
 
 	function Bullet:updateBulletFly()
-
 		local moveLength = 4 --这个取配置
 		local MaxLength = 300 --这个取配置
 		local curX,curY = self:getPosition()

@@ -1,21 +1,21 @@
-if not battlefieldData then
+if not BattlefieldData then
 
-	local battlefieldData = class("battlefieldData")
-	cc.exports.battlefieldData = battlefieldData
+	local BattlefieldData = class("BattlefieldData")
+	cc.exports.BattlefieldData = BattlefieldData
 
 	local instance = nil;
-	function battlefieldData:sharedData()
+	function BattlefieldData:sharedData()
 		if not instance then
-			instance = battlefieldData.new()
+			instance = BattlefieldData.new()
 		end
 		return instance
 	end
 
-	function battlefieldData:ctor()
+	function BattlefieldData:ctor()
 		self:init()
 	end
 
-	function battlefieldData:init()
+	function BattlefieldData:init()
 		self.enemyRoleArray = {} --敌人列表
 		self.playerRoleArray = {}--玩家列表
 
@@ -26,40 +26,40 @@ if not battlefieldData then
 	end
 
 
-	function battlefieldData:setMyActor(Actor)
+	function BattlefieldData:setMyActor(Actor)
 		self.setPlayerActor = Node
 	end
-	function battlefieldData:getMyActor()
+	function BattlefieldData:getMyActor()
 		return self.setPlayerActor
 	end
 
 
-	function battlefieldData:getEnemyActor()
+	function BattlefieldData:getEnemyActor()
 		return self.enemyRoleArray
 	end
-	function battlefieldData:insertEnemyActor(enemy)
+	function BattlefieldData:insertEnemyActor(enemy)
 		table.insert(self.enemyRoleArray, enemy)
 	end
-	function battlefieldData:removeEnemyActor(index)
+	function BattlefieldData:removeEnemyActor(index)
 		table.remove(self.enemyRoleArray,index)
 	end
 
-	function battlefieldData:getplayerActor()
+	function BattlefieldData:getplayerActor()
 		return self.playerRoleArray
 	end
-	function battlefieldData:insertplayerActor(enemy)
+	function BattlefieldData:insertplayerActor(enemy)
 		table.insert(self.playerRoleArray, enemy)
 	end
 
 
-	function battlefieldData:setEnemyInfoList(list)
+	function BattlefieldData:setEnemyInfoList(list)
 		self.enemyInfoList = list
 	end
 	--考虑网络玩家数据如何发送
-	function battlefieldData:setPlayerInfoList(list)
+	function BattlefieldData:setPlayerInfoList(list)
 		self.playerInfoList = list
 	end
-	function battlefieldData:getPlayerInfoList()
+	function BattlefieldData:getPlayerInfoList()
 		return self.playerInfoList
 	end
 	
