@@ -55,12 +55,12 @@ if not BaseLayer then
 				print("onTouchEnded : "..self._viewID)
 				if self.touchEnd then self:touchEnd(touch, event) end
 			end
-			self._listener = cc.EventListenerTouchOneByOne:create()
-			self._listener:registerScriptHandler(onTouchBegan, cc.Handler.EVENT_TOUCH_BEGAN)
-			self._listener:registerScriptHandler(onTouchEnded, cc.Handler.EVENT_TOUCH_ENDED)
-		    self._listener:setSwallowTouches(true)
-		    local eventDispatcher = self:getEventDispatcher()
-		    eventDispatcher:addEventListenerWithSceneGraphPriority(self._listener, self)
+			-- self._listener = cc.EventListenerTouchOneByOne:create()
+			-- self._listener:registerScriptHandler(onTouchBegan, cc.Handler.EVENT_TOUCH_BEGAN)
+			-- self._listener:registerScriptHandler(onTouchEnded, cc.Handler.EVENT_TOUCH_ENDED)
+		 --    self._listener:setSwallowTouches(true)
+		 --    local eventDispatcher = self:getEventDispatcher()
+		 --    eventDispatcher:addEventListenerWithSceneGraphPriority(self._listener, self)
 		end
 	end
 

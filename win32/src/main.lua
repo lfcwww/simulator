@@ -9,6 +9,8 @@ cc.FileUtils:getInstance():addSearchPath("res/pic/map/")
 cc.FileUtils:getInstance():addSearchPath("res/pic/role/")
 cc.FileUtils:getInstance():addSearchPath("res/pic/ui/")
 cc.FileUtils:getInstance():addSearchPath("res/pic/fontpic/")
+cc.FileUtils:getInstance():addSearchPath("res/pic/tiledMap/")
+
 cc.FileUtils:getInstance():addSearchPath("res/music/")
 cc.FileUtils:getInstance():addSearchPath("res/font/")
 

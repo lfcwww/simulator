@@ -26,6 +26,7 @@ local Widget = ccui.Widget
 
 function Widget:onTouch(callback)
     self:addTouchEventListener(function(sender, state)
+         dump(sender:getLocation())
         local event = {x = 0, y = 0}
         if state == 0 then
             event.name = "began"

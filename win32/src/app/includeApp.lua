@@ -1,9 +1,17 @@
 
 if not includeApp then
+	import(".datas.MusicType");
+	import(".datas.PictureConfig");
+
+
+
 	import(".Tkframe.base.view.ViewConfig")
 	import(".Tkframe.base.view.ViewMgr")
 	import(".Tkframe.base.view.BaseLayer")
-	import(".Tkframe.base.role.ActorBase");
+	import(".Tkframe.role.ActorBase");
+	import(".Tkframe.role.BattleActor");
+
+
 
 
 	import(".Interface.Effect");
@@ -11,15 +19,17 @@ if not includeApp then
 	import(".Interface.CcFuns");
 	import(".Interface.JoyStick");
 	import(".Interface.SkillBtn");
-	import(".Interface.BattleActor");
-	
+	import(".Interface.Bullet");
+	import(".Interface.MusicMgr");
 
 
 	
 
-
+	
 	import(".modules.loading.Loading");
-	import(".modules.battlefield.battlefield");
+	import(".modules.battlefield.Battlefield");
+	import(".modules.battlefield.BattlefieldData");
+	import(".modules.battlefield.BattleRoleMgr");
 	
 
 

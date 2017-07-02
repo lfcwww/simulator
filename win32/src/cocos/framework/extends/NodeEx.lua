@@ -219,6 +219,152 @@ function Node:onExitTransitionStart_()
     self:onExitTransitionStartCallback_()
 end
 
+
+
+function Node:addNodeTouchEventListener(callBack, swallow, isOpposite )
+    if not callBack then
+        print("callBack is not exist!")
+        return
+    end
+
+    --已经有监听的情况下，移除旧的监听
+    if self.touchNodeCallBack then
+        local eventDispatcher = self:getEventDispatcher()
+        eventDispatcher:removeEventListener(self.touchListener)
+        self.touchListener = nil
+    end
+
+    --因为继承widget的会重写这个方法,所以直接修改
+    -- self:setTouchEnabled(true)
+    self.m_touchEnabledFlag = true
+
+    self.touchNodeCallBack = callBack
+    --精灵添加点击事件的方法
+    self.touchListener = cc.EventListenerTouchOneByOne:create()  
+    if swallow or swallow == nil then
+        self.touchListener:setSwallowTouches(true)
+    else
+        self.touchListener:setSwallowTouches(false)
+    end
+
+    --began
+    self.touchListener:registerScriptHandler(function( touch, event)
+
+        if self.m_touchEnabledFlag == false then
+            return false
+        end
+
+        --没有这个的话，在不可视状态下也会响应
+        if not self:isCapVisible() then
+            return false
+        end
+
+        local location = touch:getLocation()
+        local evt = {name = "began", x = location.x, y = location.y}
+        location = self:getParent():convertToNodeSpace(location)
+
+        --点击事件不在显示区域
+        if not self:containsTouchLocation(location.x, location.y) then
+            if isOpposite then
+                return self.touchNodeCallBack(self, evt) or false
+            end
+            return false
+        else
+            if isOpposite then
+                return true
+            end
+        end
+
+        local boolValue = self.touchNodeCallBack(self, evt) or false
+        return boolValue
+    end, cc.Handler.EVENT_TOUCH_BEGAN )
+
+    --moved
+    self.touchListener:registerScriptHandler(function ( touch, event )
+        local location = touch:getLocation()
+        local evt = {name = "moved", x = location.x, y = location.y }
+        self.touchNodeCallBack(self, evt)
+
+    end, cc.Handler.EVENT_TOUCH_MOVED )
+
+    --ended
+    self.touchListener:registerScriptHandler(function ( touch, event )
+        local location = touch:getLocation()
+        local evt = { x = location.x, y = location.y }
+        location = self:getParent():convertToNodeSpace(location)
+
+        --取消时，触摸点不在显示区域内为cancel，否则为end
+        if not self:containsTouchLocation(location.x, location.y) then
+            -- MusicMgr.playSound(MusicType.UIEffect.btnClick)
+            evt.name = "canceled"
+        else
+            -- MusicMgr.playSound(MusicType.UIEffect.btnClick)
+            evt.name = "ended"
+        end
+        self.touchNodeCallBack(self, evt)
+
+    end, cc.Handler.EVENT_TOUCH_ENDED )
+
+    --获取精灵的事件分发器
+    local eventDispatcher = self:getEventDispatcher()
+    --注册监听到分发器中
+    eventDispatcher:addEventListenerWithSceneGraphPriority(self.touchListener, self) 
+end
+
+
+function Node:setTouchEnabled(enable)
+    self.m_touchEnabledFlag = enable
+end
+
+
+--往祖先节点遍历，检查是否可视
+function Node:isCapVisible()
+    local node = self
+    while node:getParent() ~= nil do
+        if node:isVisible() then
+            node = node:getParent()
+        else
+            return false
+        end
+    end
+
+    return self:isVisible()
+end
+
+function Node:containsTouchLocation(x, y)
+    local touchRect = self:getTouchRect()
+    local b = cc.rectContainsPoint(touchRect, cc.p(x,y))
+    return b
+end
+
+
+--获取该节点的触摸范围
+function Node:getTouchRect()
+    -- local s = self:getTexture():getContentSize()
+    local size = self:getContentSize()
+    size.width, size.height = size.width * self:getScaleX(), size.height * self:getScaleY()
+
+    local anchor = self:getAnchorPoint()
+    local x = self:getPositionX()
+    local y = self:getPositionY()
+
+    x = x - size.width * anchor.x
+    y = y - size.height * anchor.y
+
+    return cc.rect(x, y, size.width, size.height)
+end
+
+
+function Node:schedule(callback, interval)
+    local seq = transition.sequence({
+        cc.DelayTime:create(interval),
+        cc.CallFunc:create(callback),
+    })
+    local action = cc.RepeatForever:create(seq)
+    self:runAction(action)
+    return action
+end
+
 function Node:onCleanup_()
     self:onCleanup()
     if not self.onCleanupCallback_ then

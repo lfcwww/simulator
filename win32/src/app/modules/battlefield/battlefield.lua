@@ -1,46 +1,85 @@
 
-if not battlefield then
+if not Battlefield then
 
-	ViewConfig.viewPath["battlefield"] = "app.modules.battlefield.battlefield";
+	ViewConfig.viewPath["Battlefield"] = "app.modules.battlefield.Battlefield";
 
-	local battlefield = class("battlefield", BaseLayer);
-	cc.exports.battlefield = battlefield;
+	local Battlefield = class("Battlefield", BaseLayer);
+	cc.exports.Battlefield = Battlefield;
 
-	function battlefield:ctor(viewID, params)
-	       self:initUI()
+	function Battlefield:ctor(viewID, params)
+	    self:initUI()
+	end	
+
+	function Battlefield:initUI( )
+		self.battlerolemgr = BattleRoleMgr.new():addTo(self)
+		self.tmxMap = cc.TMXTiledMap:create("map22.tmx"):addTo(self,-1)
+		self.battlerolemgr:setStandMap(self.tmxMap)
+
+		self.myObject = self.battlerolemgr:buildMyRole()
+		self.myJoystick = self.battlerolemgr:buildJoystick()
+
+		self.battlerolemgr:initEnemyRole()
+
+
+
+
+
+
+-- 分类： cocos2d-lua  
+ 
+
+-- local map = cc.TMXTiledMap:create("res/10.tmx")
+
+--     self:addChild(map)
+
+
+
+
+-- local group = map:getObjectGroup("board1")
+
+-- local objects = group:getObjects()
+
+
+
+
+-- local dict = nil
+
+-- local i = 0
+
+-- local len = table.getn(objects)
+
+
+
+
+-- for i=0,len-1,1 do
+
+--     dict = objects[i+1]
+
+--     if dict == nil then
+
+--         break
+
+--     end
+
+-- dump(dict)
+
+
+
+
+		
 	end
-
-	function battlefield:initUI( )
-		self.background = display.newSprite("guozhan_new.jpg")
-		self:addChild(self.background)
-		self.background:setPosition(display.cx, display.cy)
-
-	   	cc.Label:createWithSystemFont("战场", "Arial", 40)
-        :move(display.cx, display.cy + 200)
-        :addTo(self)
-
-
-       	self.Joystick_Wheel = Joystick:create()
-       	self:addChild(self.Joystick_Wheel)
-       	self.Joystick_Wheel:setPosition(100,100)
-
-       	self.Joystick_Aim = Joystick:create()
-       	self:addChild(self.Joystick_Aim)
-       	self.Joystick_Aim:setPosition(display.width-300,100)
-	end
-
 
 	
 
 
 
 
-	function battlefield:star(params)
+	function Battlefield:star(params)
 		self.view = LoadingView.new(params,self)--阵容中武将
 		self:addChild(self.view)
 
 		print("加载了loading33333333333333")
 	end
 
-	return battlefield;
+	return Battlefield;
 end

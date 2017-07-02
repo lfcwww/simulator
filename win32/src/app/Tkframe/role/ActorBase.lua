@@ -18,26 +18,25 @@ if not ActorBase then
 
 	function ActorBase:ctor()
 		self:initSprite()
+		self:setContentSize(self.BodySprite:getContentSize())
 	end
 
 	function ActorBase:initSprite(_modelId)
 		self:initBodySprite()
-		self:initEquipSprite()
+		self:initWeaponSprite()
 	end
 
 	function ActorBase:initBodySprite()
 
-		self.BodySprite = display.newSprite("#gongyong_goumaikuang_4.png")
+		self.BodySprite = display.newSprite(PictureConfig.pngPath[3])
 		self.BodySprite:setAnchorPoint(cc.p(0.5,0.5))
 		self:addChild(self.BodySprite)
-		self.BodySprite:setScale(0.7)
 	end
 
-	function ActorBase:initEquipSprite()
-		self.EquipSprite = display.newSprite("#gongyong_di_3.png")
-		self.EquipSprite:setAnchorPoint(cc.p(0.5,0.5))
+	function ActorBase:initWeaponSprite()
+		self.EquipSprite = display.newSprite(PictureConfig.pngPath[5])
+		self.EquipSprite:setAnchorPoint(cc.p(0.5,0.3))
 		self:addChild(self.EquipSprite)
-
 	end
 
 

@@ -3,7 +3,9 @@ if not BattleActor then
 
     local Animationspeed = 1.0/30.0;
 
-    local movedir = 1
+    local moveLength = 4 
+
+    local bulletInterval = 1 --发射间隔
 
     BattleActor.state = {
     	stand = "stand",
@@ -11,43 +13,83 @@ if not BattleActor then
 	}
 
 	function BattleActor:ctor(param)
-
-		local modelId = 1 --模型ID
-
+		--模型ID
+		local modelId = 1 
+		--状态
+		self._state = BattleActor.state.stand
+ 		--随点焦点
+		self.FollowPointCallback = nil
+		--旋转值
 		self.m_AngleRad = 0
+		--计时相关
+		self._sendBullet = false
+		self.curUpdatetime = 0
+		self.sandBulletTime = 0
 
 		self:BuilModel(modelId)
 
-		self:schedule(handler(self, self.UpdataState), Animationspeed)
+		self:schedule(handler(self, self.UpdataMachine), Animationspeed)
 	end
 
 	function BattleActor:BuilModel(modelId)
-		print("1111111111111111")
 		BattleActor.super.ctor(self, modelId);
 	end
 
 	
+	function BattleActor:UpdataMachine()
+		self.curUpdatetime = self.curUpdatetime + Animationspeed
+		if self._state ==  BattleActor.state.stand then
+		elseif self._state ==  BattleActor.state.run then
+			self:setRoleMove()
+		end
+		if self._sendBullet then
+			if self.curUpdatetime - self.sandBulletTime > bulletInterval then
+				self:Shooting()
+				self.sandBulletTime = self.curUpdatetime
+			end
+		end
+		
+	end
 
-	function BattleActor:UpdataState()
-
-
+	function BattleActor:_setMoveState(state)
+		self._state = state
+	end
+	function BattleActor:_setRoleBodyAngle(angle)
+		self.BodySprite:setRotation(angle)
+		self.m_AngleRad = math.rad(angle)
 	end
 
 
-	function BattleActor:setRoleAngle(angle)
-		self:setRotation(angle)
-		self.m_AngleRad = math.rad(angle)
+	function BattleActor:_setWeaponEnd()
+		self._sendBullet = false
+	end
+	function BattleActor:_setRoleWeaponAngle(angle)
+		self.EquipSprite:setRotation(angle)
+		self.m_WeaponAngle = math.rad(angle)
+
+		self._sendBullet = true
+	end
+
+	function BattleActor:_registerFollow(callback)
+		self.FollowPointCallback = callback
 	end
 
 	function BattleActor:setRoleMove()
 		local curX,curY = self:getPosition()
-		local pos = self:getAnglePosition(movedir)
+		local pos = self:getAnglePosition(moveLength)
 		local newPos = cc.pAdd(pos,cc.p(curX,curY))
         self:setPosition(newPos)
+        if self.FollowPointCallback then
+        	self.FollowPointCallback(newPos)
+        end
 	end	
 
+	function BattleActor:setRoleStopMove()
+		print("停止移动,")
+	end
+
     function BattleActor:getAnglePosition(r)
-    	print("---",r,self.m_AngleRad)
+    	-- print("---",r,self.m_AngleRad)
         local y = r*math.cos(self.m_AngleRad)
         local x = r*math.sin(self.m_AngleRad)
         return cc.p(x , y)
@@ -71,6 +113,33 @@ if not BattleActor then
 	function BattleActor:setHp()
 
 	end
+
+	--被炸
+	function BattleActor:setBoom()
+		return self:removeSelf();
+	end
+
+	
+--------
+--射击--
+--------	
+	function BattleActor:Shooting()
+		local paramTab = {}
+		paramTab.parentAddr = self
+		paramTab.bulletId = 1002
+		paramTab.Angle = self.m_WeaponAngle
+
+		-- paramTab.startpos = cc.p(self.getPositionX(),self:getPositionY())
+
+		local bullet = Bullet.new(paramTab)
+		bullet:setPosition(self:getPositionX(), self:getPositionY())
+		self:getParent():addChild(bullet)
+	end
+	
+
+	
+
+
 
 
 
