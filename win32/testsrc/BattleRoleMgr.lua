@@ -10,8 +10,8 @@ if not BattleRoleMgr then
 	local BattleRoleMgr = class("BattleRoleMgr", function() return display.newLayer() end)
 	cc.exports.BattleRoleMgr = BattleRoleMgr
 
-	function BattleRoleMgr:ctor()
-		self.standMap = nil
+	function BattleRoleMgr:ctor(node)
+		self.standMap = node
 		self.playerRole = nil
 		self.FollowPointRole = nil
 
@@ -19,20 +19,16 @@ if not BattleRoleMgr then
 		BattlefieldData:sharedData():init()
 
 		self.JoystickWheel_angle = 0
-
-		-- self:initEnemyRole()
-	end
-
-	function BattleRoleMgr:setStandMap(node)
-		self.standMap = node
-		self:registerFollowPoint(self.playerRole)
 	end
 
 	function BattleRoleMgr:registerFollowPoint(role)
+		print("333333333333")
 		if self.FollowPointRole then
+			print("444444444444444")
 			self.FollowPointRole:_registerFollow(nil)
 		end
 		if role then
+			print("55555555555555")
 			role:_registerFollow(handler(self, self.UpdateMapFollowPoint))
 			self.FollowPointRole = role
 		end
@@ -56,9 +52,9 @@ if not BattleRoleMgr then
 		if destY < display.height - self.standMap:getContentSize().height / 2 then
 			destY = display.height - self.standMap:getContentSize().height / 2
 		end
-		-- dump(pos)
-		-- print("ddd===",destX)
-		-- print("ddd===",destY)
+		dump(pos)
+		print("ddd===",destX)
+		print("ddd===",destY)
 		self.standMap:setPositionX(destX)
 		self.standMap:setPositionY(destY)
 	end
@@ -67,12 +63,16 @@ if not BattleRoleMgr then
 
 
 	function BattleRoleMgr:buildMyRole(pos)
+		print("111111111111")
 		if not self.playerRole then
 	       	local Role = BattleActor.new()
-	       	self:addChild(Role)
+	       	self.standMap:addChild(Role)
 	       	Role:setPosition(pos or cc.p(display.cx,display.cy))
 	       	self.playerRole = Role
 	       	BattlefieldData:sharedData():setMyActor(self.playerRole)
+	       	print("22222222")
+	       	self:registerFollowPoint(self.playerRole)
+
 	    end
 	    return self.playerRole
 	end

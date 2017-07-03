@@ -58,14 +58,13 @@ if not Bullet then
 			-- dump(EnemyRect)
 			-- dump(BulletRect)
 			if cc.rectIntersectsRect(EnemyRect, BulletRect) then
-				g_tipsMgr:ShowTips("尚未弄跳转")
+				print("被撞上了111")
 				if v.setBoom then
 					v:setBoom()
 					BattlefieldData:sharedData():removeEnemyActor(i)
 				end
 			end
 		end
-
 	end
 
 	function Bullet:updateBulletFly()

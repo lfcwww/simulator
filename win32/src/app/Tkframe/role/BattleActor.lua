@@ -78,10 +78,12 @@ if not BattleActor then
 		local curX,curY = self:getPosition()
 		local pos = self:getAnglePosition(moveLength)
 		local newPos = cc.pAdd(pos,cc.p(curX,curY))
-        self:setPosition(newPos)
-        if self.FollowPointCallback then
-        	self.FollowPointCallback(newPos)
-        end
+		if self:CheckboundingBox() then
+	        self:setPosition(newPos)
+	        if self.FollowPointCallback then
+	        	self.FollowPointCallback(newPos)
+	        end
+	    end
 	end	
 
 	function BattleActor:setRoleStopMove()
@@ -118,6 +120,29 @@ if not BattleActor then
 	function BattleActor:setBoom()
 		return self:removeSelf();
 	end
+
+	function BattleActor:CheckboundingBox()
+		local EnemyArray = BattlefieldData:sharedData():getEnemyActor()
+		local BulletRect = self:getTouchRect()
+		-- dump(EnemyArray)
+		for i,v in ipairs(EnemyArray) do
+			local EnemyRect = v:getTouchRect()
+			-- dump(EnemyRect)
+			-- dump(BulletRect)
+			--需要解决两个旋转后的矩形碰撞问题
+			--http://blog.csdn.net/code_nice/article/details/52329166
+			if cc.rectIntersectsRect(EnemyRect, BulletRect) then
+				print("被撞上了111")
+				if v.setBoom then
+					v:setBoom()
+					BattlefieldData:sharedData():removeEnemyActor(i)
+				end
+				return false
+			end
+		end
+		return true
+	end
+
 
 	
 --------

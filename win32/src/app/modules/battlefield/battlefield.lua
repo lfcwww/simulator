@@ -11,14 +11,13 @@ if not Battlefield then
 	end	
 
 	function Battlefield:initUI( )
-		self.battlerolemgr = BattleRoleMgr.new():addTo(self)
-		self.tmxMap = cc.TMXTiledMap:create("map22.tmx"):addTo(self,-1)
-		self.battlerolemgr:setStandMap(self.tmxMap)
+		self.BackGroundTmx = cc.TMXTiledMap:create("map_1.tmx"):addTo(self,-1)
 
-		self.myObject = self.battlerolemgr:buildMyRole()
-		self.myJoystick = self.battlerolemgr:buildJoystick()
-
-		self.battlerolemgr:initEnemyRole()
+		self._RoleMgr = BattleRoleMgr.new(self.BackGroundTmx):addTo(self)
+		self._myRole = self._RoleMgr:buildMyRole()
+		self._RoleMgr:initEnemyRole()
+		self._myJoystick = self._RoleMgr:buildJoystick()
+		
 
 
 

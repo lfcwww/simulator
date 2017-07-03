@@ -10,22 +10,14 @@ if not BattleRoleMgr then
 	local BattleRoleMgr = class("BattleRoleMgr", function() return display.newLayer() end)
 	cc.exports.BattleRoleMgr = BattleRoleMgr
 
-	function BattleRoleMgr:ctor()
-		self.standMap = nil
+	function BattleRoleMgr:ctor(node)
+		self.standMap = node
 		self.playerRole = nil
 		self.FollowPointRole = nil
-
 
 		BattlefieldData:sharedData():init()
 
 		self.JoystickWheel_angle = 0
-
-		-- self:initEnemyRole()
-	end
-
-	function BattleRoleMgr:setStandMap(node)
-		self.standMap = node
-		self:registerFollowPoint(self.playerRole)
 	end
 
 	function BattleRoleMgr:registerFollowPoint(role)
@@ -56,23 +48,18 @@ if not BattleRoleMgr then
 		if destY < display.height - self.standMap:getContentSize().height / 2 then
 			destY = display.height - self.standMap:getContentSize().height / 2
 		end
-		-- dump(pos)
-		-- print("ddd===",destX)
-		-- print("ddd===",destY)
 		self.standMap:setPositionX(destX)
 		self.standMap:setPositionY(destY)
 	end
 
-	
-
-
 	function BattleRoleMgr:buildMyRole(pos)
 		if not self.playerRole then
 	       	local Role = BattleActor.new()
-	       	self:addChild(Role)
+	       	self.standMap:addChild(Role)
 	       	Role:setPosition(pos or cc.p(display.cx,display.cy))
 	       	self.playerRole = Role
 	       	BattlefieldData:sharedData():setMyActor(self.playerRole)
+	       	self:registerFollowPoint(self.playerRole)
 	    end
 	    return self.playerRole
 	end
@@ -80,11 +67,10 @@ if not BattleRoleMgr then
 	function BattleRoleMgr:initEnemyRole(pos)
 		local poslist = {
 			[1] = cc.p(100,500),
-			[2] = cc.p(300,200),
-			[3] = cc.p(700,550),
+			-- [2] = cc.p(300,200),
+			-- [3] = cc.p(700,550),
 		}
-
-		for i=1,3 do
+		for i=1,#poslist do
 			local posx = poslist[i].x--math.random(0,960)
 			local posy = poslist[i].y--math.random(0,640)
 			local role = self:addEnemyRole(cc.p(posx,posy))
@@ -92,28 +78,16 @@ if not BattleRoleMgr then
 		end
 	end
 
-
-	
-
-
 	function BattleRoleMgr:addEnemyRole(pos)
        	local Role = BattleActor.new()
-       	self:addChild(Role)
+       	self.standMap:addChild(Role)
        	Role:setPosition(pos or cc.p(display.cx,display.cy))
        	return Role
 	end
 
 	function BattleRoleMgr:addPlayerRole(pos)
 
-
-
 	end
-
-
-
-
-
-
 
 
 
@@ -121,9 +95,6 @@ if not BattleRoleMgr then
 	function BattleRoleMgr:check(pos)
 
 	end
-
-
-
 
 
 ---------------
