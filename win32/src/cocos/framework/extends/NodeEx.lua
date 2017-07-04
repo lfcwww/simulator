@@ -311,11 +311,9 @@ function Node:addNodeTouchEventListener(callBack, swallow, isOpposite )
     eventDispatcher:addEventListenerWithSceneGraphPriority(self.touchListener, self) 
 end
 
-
 function Node:setTouchEnabled(enable)
     self.m_touchEnabledFlag = enable
 end
-
 
 --往祖先节点遍历，检查是否可视
 function Node:isCapVisible()
@@ -327,7 +325,6 @@ function Node:isCapVisible()
             return false
         end
     end
-
     return self:isVisible()
 end
 

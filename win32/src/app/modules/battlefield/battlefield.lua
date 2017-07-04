@@ -7,8 +7,8 @@ if not Battlefield then
 	cc.exports.Battlefield = Battlefield;
 
 	function Battlefield:ctor(viewID, params)
-		self:Physics()
-	    -- self:initUI()
+		-- self:Physics()
+	    self:initUI() 
 	end	
 
 	function Battlefield:initUI()
@@ -17,12 +17,13 @@ if not Battlefield then
 
 
 
-		-- self.BackGroundTmx = cc.TMXTiledMap:create("map_1.tmx"):addTo(self,-1)
+		self.BackGroundTmx = cc.TMXTiledMap:create("background.tmx"):addTo(self,-1)
+		self.BackGroundTmx:setOpacity(50)
 
-		-- self._RoleMgr = BattleRoleMgr.new(self.BackGroundTmx):addTo(self)
-		-- self._myRole = self._RoleMgr:buildMyRole()
-		-- self._RoleMgr:initEnemyRole()
-		-- self._myJoystick = self._RoleMgr:buildJoystick()
+		self._RoleMgr = BattleRoleMgr.new(self.BackGroundTmx):addTo(self)
+		self._myRole = self._RoleMgr:buildMyRole()
+		self._RoleMgr:initEnemyRole()
+		self._myJoystick = self._RoleMgr:buildJoystick()
 		
 
 

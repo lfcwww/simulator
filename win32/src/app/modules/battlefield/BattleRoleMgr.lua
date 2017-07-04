@@ -36,17 +36,17 @@ if not BattleRoleMgr then
 		local offsetY = display.cy - worldPoint.y
 		local destX = self.standMap:getPositionX() + offsetX
 		local destY = self.standMap:getPositionY() + offsetY
-		if destX > 0 then
-			destX = 0
-		end
+
+		destX = destX < 0 and destX or 0
+		destY = destY < 0 and destY or 0
 		if destX < -(self.standMap:getContentSize().width - display.width) then
 			destX = -(self.standMap:getContentSize().width - display.width)
 		end
 		if destY > self.standMap:getContentSize().height / 2 then
 			destY = self.standMap:getContentSize().height / 2
 		end
-		if destY < display.height - self.standMap:getContentSize().height / 2 then
-			destY = display.height - self.standMap:getContentSize().height / 2
+		if destY < display.height - self.standMap:getContentSize().height then
+			destY = display.height - self.standMap:getContentSize().height 
 		end
 		self.standMap:setPositionX(destX)
 		self.standMap:setPositionY(destY)
