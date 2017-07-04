@@ -87,7 +87,7 @@ if not Joystick then
         end
 
 
-       self.TouchNode = display.newNode():addTo(self)
+        self.TouchNode = display.newNode():addTo(self)
         self.TouchNode:setTouchEnabled(true)
         self.TouchNode:setContentSize(self:getContentSize())
         self.TouchNode:addNodeTouchEventListener(function (sender, event)

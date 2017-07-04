@@ -220,11 +220,13 @@ display.DEFAULT_TTF_FONT        = "Arial"
 display.DEFAULT_TTF_FONT_SIZE   = 32
 
 
-local PARAMS_EMPTY = {}
+local PARAMS_EMPTY = {physics = true}
 local RECT_ZERO = cc.rect(0, 0, 0, 0)
 
 local sceneIndex = 0
 function display.newScene(name, params)
+
+    print("加载了newScene",name)
     params = params or PARAMS_EMPTY
     sceneIndex = sceneIndex + 1
     local scene
@@ -232,6 +234,7 @@ function display.newScene(name, params)
         scene = cc.Scene:create()
     else
         scene = cc.Scene:createWithPhysics()
+        scene:getPhysicsWorld():setDebugDrawMask(cc.PhysicsWorld.DEBUGDRAW_ALL);
     end
     scene.name_ = string.format("%s:%d", name or "<unknown-scene>", sceneIndex)
 

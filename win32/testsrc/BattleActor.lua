@@ -71,6 +71,7 @@ if not BattleActor then
 	end
 
 	function BattleActor:_registerFollow(callback)
+		print("4444444444444444444")
 		self.FollowPointCallback = callback
 	end
 
@@ -79,6 +80,7 @@ if not BattleActor then
 		local pos = self:getAnglePosition(moveLength)
 		local newPos = cc.pAdd(pos,cc.p(curX,curY))
         self:setPosition(newPos)
+        print("99999999999999",self.FollowPointCallback)
         if self.FollowPointCallback then
         	self.FollowPointCallback(newPos)
         end

@@ -33,6 +33,7 @@ end
 
 function AppBase:run(initSceneName)
     initSceneName = initSceneName or self.configs_.defaultSceneName
+    print("initSceneName====",initSceneName)
     self:enterScene(initSceneName)
 end
 
