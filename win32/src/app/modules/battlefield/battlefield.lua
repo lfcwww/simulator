@@ -13,10 +13,6 @@ if not Battlefield then
 
 	function Battlefield:initUI()
 
-
-
-
-
 		self.BackGroundTmx = cc.TMXTiledMap:create("background.tmx"):addTo(self,-1)
 		self.BackGroundTmx:setOpacity(50)
 
@@ -31,43 +27,7 @@ if not Battlefield then
 
 
 
--- 分类： cocos2d-lua  
- 
 
--- local map = cc.TMXTiledMap:create("res/10.tmx")
-
---     self:addChild(map)
-
-
-
-
--- local group = map:getObjectGroup("board1")
-
--- local objects = group:getObjects()
-
-
-
-
--- local dict = nil
-
--- local i = 0
-
--- local len = table.getn(objects)
-
-
-
-
--- for i=0,len-1,1 do
-
---     dict = objects[i+1]
-
---     if dict == nil then
-
---         break
-
---     end
-
--- dump(dict)
 
 
 

@@ -15,6 +15,8 @@ if not BattleActor then
 	function BattleActor:ctor(param)
 		--模型ID
 		local modelId = 1 
+		self.BarrierGroup = param.BarrierGroup
+
 		--状态
 		self._state = BattleActor.state.stand
  		--随点焦点
@@ -122,25 +124,34 @@ if not BattleActor then
 	end
 
 	function BattleActor:CheckboundingBox()
-		local EnemyArray = BattlefieldData:sharedData():getEnemyActor()
-		local BulletRect = self:getTouchRect()
-		-- dump(EnemyArray)
-		for i,v in ipairs(EnemyArray) do
-			local EnemyRect = v:getTouchRect()
-			-- dump(EnemyRect)
-			-- dump(BulletRect)
-			--需要解决两个旋转后的矩形碰撞问题
-			--http://blog.csdn.net/code_nice/article/details/52329166
-			if cc.rectIntersectsRect(EnemyRect, BulletRect) then
-				print("被撞上了111")
-				if v.setBoom then
-					v:setBoom()
-					BattlefieldData:sharedData():removeEnemyActor(i)
-				end
-				return false
-			end
-		end
+		-- local BulletRect = self:getTouchRect()
+		-- for i,v in ipairs(self.BarrierGroup) do
+		-- 	if cc.rectIntersectsRect(v, BulletRect) then
+		-- 		print("被撞上了111")
+		-- 		return false
+		-- 	end
+		-- end
 		return true
+
+		-- local EnemyArray = BattlefieldData:sharedData():getEnemyActor()
+		-- local BulletRect = self:getTouchRect()
+		-- -- dump(EnemyArray)
+		-- for i,v in ipairs(EnemyArray) do
+		-- 	local EnemyRect = v:getTouchRect()
+		-- 	-- dump(EnemyRect)
+		-- 	-- dump(BulletRect)
+		-- 	--需要解决两个旋转后的矩形碰撞问题
+		-- 	--http://blog.csdn.net/code_nice/article/details/52329166
+		-- 	if cc.rectIntersectsRect(EnemyRect, BulletRect) then
+		-- 		print("被撞上了111")
+		-- 		if v.setBoom then
+		-- 			v:setBoom()
+		-- 			BattlefieldData:sharedData():removeEnemyActor(i)
+		-- 		end
+		-- 		return false
+		-- 	end
+		-- end
+		-- return true
 	end
 
 

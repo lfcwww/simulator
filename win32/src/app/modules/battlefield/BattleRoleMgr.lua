@@ -11,14 +11,55 @@ if not BattleRoleMgr then
 	cc.exports.BattleRoleMgr = BattleRoleMgr
 
 	function BattleRoleMgr:ctor(node)
+
 		self.standMap = node
 		self.playerRole = nil
 		self.FollowPointRole = nil
 
+		self.mypos = nil
+		self.BarrierGroup = {}
+		self.enemyRolePos = {}
+
+
 		BattlefieldData:sharedData():init()
 
 		self.JoystickWheel_angle = 0
+
+		self:initMapBarrier()
 	end
+
+
+	function BattleRoleMgr:initPhysicsLayer()
+		local visibleSize = cc.Director:getInstance():getVisibleSize();
+		self.Physicsbody = cc.PhysicsBody:createEdgeBox(visibleSize,  cc.PHYSICSBODY_MATERIAL_DEFAULT,3)
+	end
+
+
+
+
+
+	function BattleRoleMgr:initMapBarrier()
+		local Group = self.standMap:getObjectGroup("boardLayer")
+		local objects = Group:getObjects()
+		dump(objects)
+		for i,v in ipairs(objects) do
+			if v.type == "1" then
+				local visibleSize = cc.size(v.width,v.height)
+				local Physicsbody = cc.PhysicsBody:createEdgeBox(visibleSize,  cc.PHYSICSBODY_MATERIAL_DEFAULT,3)
+
+				local edgeShape = display.newNode()
+				edgeShape:setPhysicsBody(Physicsbody)
+				self.standMap:addChild(edgeShape)
+				edgeShape:setPosition(v.x+v.width*0.5, v.y+v.height*0.5)
+				table.insert(self.BarrierGroup, edgeShape)
+			elseif v.type == "2" then
+				self.mypos = v
+			elseif v.type == "3" then
+				table.insert(self.enemyRolePos, v)
+			end
+		end
+	end
+
 
 	function BattleRoleMgr:registerFollowPoint(role)
 		if self.FollowPointRole then
@@ -54,32 +95,47 @@ if not BattleRoleMgr then
 
 	function BattleRoleMgr:buildMyRole(pos)
 		if not self.playerRole then
-	       	local Role = BattleActor.new()
+			local param = {}
+			param.BarrierGroup = self.BarrierGroup
+	       	local Role = BattleActor.new(param)
 	       	self.standMap:addChild(Role)
-	       	Role:setPosition(pos or cc.p(display.cx,display.cy))
+	       	Role:setPosition(self.mypos.x,self.mypos.y)
 	       	self.playerRole = Role
 	       	BattlefieldData:sharedData():setMyActor(self.playerRole)
 	       	self:registerFollowPoint(self.playerRole)
+	       	self:UpdateMapFollowPoint(cc.p(self.mypos.x, self.mypos.y))
+
+	       	--碰墙抖动问题
+
+	       	--1 相关的代码写到fixedupdate里面 
+	       	--2
+				-- 	       	加一个
+				-- function OnTriggerEnter (other : Collider ){
+				--  transform.Rotate(0,30,0);
+				-- }
+				-- 试试，撞墙就会右拐了 
+			local PhysicsBody = cc.PhysicsBody:createBox(Role.BodySprite:getContentSize())
+			PhysicsBody:setGravityEnable(false)
+			
+	       	Role.BodySprite:setPhysicsBody(PhysicsBody);
 	    end
 	    return self.playerRole
 	end
 
 	function BattleRoleMgr:initEnemyRole(pos)
-		local poslist = {
-			[1] = cc.p(100,500),
-			-- [2] = cc.p(300,200),
-			-- [3] = cc.p(700,550),
-		}
-		for i=1,#poslist do
-			local posx = poslist[i].x--math.random(0,960)
-			local posy = poslist[i].y--math.random(0,640)
+		for i,v in ipairs(self.enemyRolePos) do
+			local posx = v.x--math.random(0,960)
+			local posy = v.y--math.random(0,640)
 			local role = self:addEnemyRole(cc.p(posx,posy))
 			BattlefieldData:sharedData():insertEnemyActor(role)
 		end
 	end
 
 	function BattleRoleMgr:addEnemyRole(pos)
-       	local Role = BattleActor.new()
+		local param = {}
+		param.BarrierGroup = self.BarrierGroup
+
+       	local Role = BattleActor.new(param)
        	self.standMap:addChild(Role)
        	Role:setPosition(pos or cc.p(display.cx,display.cy))
        	return Role
